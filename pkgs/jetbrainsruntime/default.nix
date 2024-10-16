@@ -1,8 +1,7 @@
 { lib
 , stdenv
 , harfbuzz
-, openjdk17
-, openjdk17-bootstrap
+, openjdk21
 , gnused
 , fetchFromGitHub
 , jetbrainsruntime
@@ -23,7 +22,7 @@ let
 
 in
 
-openjdk17.overrideAttrs (oldAttrs: {
+openjdk21.overrideAttrs (oldAttrs: {
   pname = "jetbrainsruntime";
   inherit version;
 
@@ -37,12 +36,13 @@ openjdk17.overrideAttrs (oldAttrs: {
   patches =
     let
       noFixNullPtrCast = patch: !(lib.isDerivation patch && lib.strings.hasPrefix "FixNullPtrCast.patch" patch.name);
-    in builtins.filter (patch: noFixNullPtrCast patch) oldAttrs.patches;
+    in
+    builtins.filter (patch: noFixNullPtrCast patch) oldAttrs.patches;
 
-  buildInputs = (oldAttrs.buildInputs or []) ++ (if useSystemHarfbuzz then [ harfbuzz ] else []);
+  buildInputs = (oldAttrs.buildInputs or [ ]) ++ (if useSystemHarfbuzz then [ harfbuzz ] else [ ]);
 
   configureFlags = [
-    "--with-boot-jdk=${openjdk17-bootstrap.home}"
+    "--with-boot-jdk=${openjdk21.home}"
     "--enable-unlimited-crypto"
     "--with-native-debug-symbols=internal"
     "--with-libjpeg=system"
@@ -66,10 +66,10 @@ openjdk17.overrideAttrs (oldAttrs: {
   '';
 
   postPatch = (oldAttrs.postPatch or "")
-              + (if bundleType == "dcevm" then ''
-                  for patch in jb/project/tools/patches/dcevm/*.patch; do patch -p1 < $patch; done
-                 '' else "")
-              + ''
+    + (if bundleType == "dcevm" then ''
+    for patch in jb/project/tools/patches/dcevm/*.patch; do patch -p1 < $patch; done
+  '' else "")
+    + ''
     sed -ir \
       -e 's/^OPENJDK_TAG=.*$/OPENJDK_TAG=jbr-${jdkVersion}+${jdkBuildNumber}/' \
       -e "s/^SOURCE_DATE_EPOCH=.*\$/SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH/" \
@@ -122,15 +122,15 @@ openjdk17.overrideAttrs (oldAttrs: {
   meta = with lib; {
     description = "An OpenJDK fork to better support Jetbrains's products.";
     longDescription = ''
-     JetBrains Runtime is a runtime environment for running IntelliJ Platform
-     based products on Windows, Mac OS X, and Linux. JetBrains Runtime is
-     based on OpenJDK project with some modifications. These modifications
-     include: Subpixel Anti-Aliasing, enhanced font rendering on Linux, HiDPI
-     support, ligatures, some fixes for native crashes not presented in
-     official build, and other small enhancements.
+      JetBrains Runtime is a runtime environment for running IntelliJ Platform
+      based products on Windows, Mac OS X, and Linux. JetBrains Runtime is
+      based on OpenJDK project with some modifications. These modifications
+      include: Subpixel Anti-Aliasing, enhanced font rendering on Linux, HiDPI
+      support, ligatures, some fixes for native crashes not presented in
+      official build, and other small enhancements.
 
-     JetBrains Runtime is not a certified build of OpenJDK. Please, use at
-     your own risk.
+      JetBrains Runtime is not a certified build of OpenJDK. Please, use at
+      your own risk.
     '';
     homepage = "https://github.com/JetBrains/JetBrainsRuntime";
     license = licenses.gpl2;

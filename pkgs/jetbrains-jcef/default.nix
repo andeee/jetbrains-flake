@@ -4,7 +4,7 @@
 , bash
 , cmake
 , git
-, openjdk17
+, openjdk21
 , python3
 , ant
 , fetchFromGitHub
@@ -14,17 +14,42 @@
 , autoPatchelfHook
 , pkg-config
 
-, udev, pulseaudio, pciutils
+, udev
+, pulseaudio
+, pciutils
 
-, expat, nspr, nss
-, alsa-lib, cups
-, cairo, fontconfig, freetype, mesa
-, atk, at-spi2-core, at-spi2-atk
-, dbus, gdk-pixbuf, glib, gtk2, pango, gnome2
-, libdrm, libxcb, libxkbcommon, libxshmfence
-, libX11, libXcomposite, libXdamage
-, libXext, libXfixes, libXi, libXrandr, libXrender
-, libXScrnSaver, libXtst
+, expat
+, nspr
+, nss
+, alsa-lib
+, cups
+, cairo
+, fontconfig
+, freetype
+, mesa
+, atk
+, at-spi2-core
+, at-spi2-atk
+, dbus
+, gdk-pixbuf
+, glib
+, gtk2
+, pango
+, gnome2
+, libdrm
+, libxcb
+, libxkbcommon
+, libxshmfence
+, libX11
+, libXcomposite
+, libXdamage
+, libXext
+, libXfixes
+, libXi
+, libXrandr
+, libXrender
+, libXScrnSaver
+, libXtst
 }:
 
 let
@@ -56,15 +81,39 @@ let
   };
 
   cefBuildInputs = [
-    expat nspr nss
-    alsa-lib cups
-    cairo fontconfig freetype mesa
-    atk at-spi2-core at-spi2-atk
-    dbus gdk-pixbuf glib gtk2 pango gnome2.GConf gnome2.gtkglext
-    libdrm libxcb libxkbcommon libxshmfence
-    libX11 libXcomposite libXdamage
-    libXext libXfixes libXi libXrandr libXrender
-    libXScrnSaver libXtst
+    expat
+    nspr
+    nss
+    alsa-lib
+    cups
+    cairo
+    fontconfig
+    freetype
+    mesa
+    atk
+    at-spi2-core
+    at-spi2-atk
+    dbus
+    gdk-pixbuf
+    glib
+    gtk2
+    pango
+    gnome2.GConf
+    gnome2.gtkglext
+    libdrm
+    libxcb
+    libxkbcommon
+    libxshmfence
+    libX11
+    libXcomposite
+    libXdamage
+    libXext
+    libXfixes
+    libXi
+    libXrandr
+    libXrender
+    libXScrnSaver
+    libXtst
   ];
 
   extraRpath = lib.makeLibraryPath [ udev pulseaudio pciutils ];
@@ -108,7 +157,7 @@ stdenv.mkDerivation {
 
   dontAutoPatchelf = true;
 
-  buildInputs = cefBuildInputs ++ [ openjdk17 ant ];
+  buildInputs = cefBuildInputs ++ [ openjdk21 ant ];
 
   TARGET_ARCH = stdenv.hostPlatform.linuxArch;
 
@@ -163,11 +212,11 @@ stdenv.mkDerivation {
   meta = with lib; {
     description = "The Java Chromium Embedded Framework.";
     longDescription = ''
-     The Java Chromium Embedded Framework (JCEF) is a simple framework for
-     embedding Chromium-based browsers in other applications using the
-     Java programming language.
+      The Java Chromium Embedded Framework (JCEF) is a simple framework for
+      embedding Chromium-based browsers in other applications using the
+      Java programming language.
 
-     This is JetBrains’ modified version of JCEF.
+      This is JetBrains’ modified version of JCEF.
     '';
     homepage = "https://github.com/JetBrains/jcef";
     license = licenses.bsd3;
